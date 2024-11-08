@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Trond Steien">
+
+<title>Oppgave 5: Analyzing repeated measures experiments</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="rapporten_files/libs/clipboard/clipboard.min.js"></script>
+<script src="rapporten_files/libs/quarto-html/quarto.js"></script>
+<script src="rapporten_files/libs/quarto-html/popper.min.js"></script>
+<script src="rapporten_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="rapporten_files/libs/quarto-html/anchor.min.js"></script>
+<link href="rapporten_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="rapporten_files/libs/quarto-html/quarto-syntax-highlighting-07ba0ad10f5680c660e360ac31d2f3b6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="rapporten_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="rapporten_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="rapporten_files/libs/bootstrap/bootstrap-b8d30c7eeda119d43de224048e70de8f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduksjon" id="toc-introduksjon" class="nav-link active" data-scroll-target="#introduksjon"><span class="header-section-number">1</span> Introduksjon</a>
+  <ul class="collapse">
+  <li><a href="#bakgrunn-og-betydning-av-styrketrening" id="toc-bakgrunn-og-betydning-av-styrketrening" class="nav-link" data-scroll-target="#bakgrunn-og-betydning-av-styrketrening"><span class="header-section-number">1.1</span> Bakgrunn og betydning av styrketrening</a></li>
+  <li><a href="#treningsvolum-og-muskulære-tilpasninger" id="toc-treningsvolum-og-muskulære-tilpasninger" class="nav-link" data-scroll-target="#treningsvolum-og-muskulære-tilpasninger"><span class="header-section-number">1.2</span> Treningsvolum og muskulære tilpasninger</a></li>
+  <li><a href="#nøkkelbegreper" id="toc-nøkkelbegreper" class="nav-link" data-scroll-target="#nøkkelbegreper"><span class="header-section-number">1.3</span> Nøkkelbegreper</a></li>
+  <li><a href="#kunnskapshull-og-forskningsbehov" id="toc-kunnskapshull-og-forskningsbehov" class="nav-link" data-scroll-target="#kunnskapshull-og-forskningsbehov"><span class="header-section-number">1.4</span> Kunnskapshull og forskningsbehov</a></li>
+  <li><a href="#forskningspørsmål" id="toc-forskningspørsmål" class="nav-link" data-scroll-target="#forskningspørsmål"><span class="header-section-number">1.5</span> Forskningspørsmål</a></li>
+  </ul></li>
+  <li><a href="#metode" id="toc-metode" class="nav-link" data-scroll-target="#metode"><span class="header-section-number">2</span> Metode</a>
+  <ul class="collapse">
+  <li><a href="#deltagere" id="toc-deltagere" class="nav-link" data-scroll-target="#deltagere"><span class="header-section-number">2.1</span> Deltagere</a></li>
+  <li><a href="#studiedesign" id="toc-studiedesign" class="nav-link" data-scroll-target="#studiedesign"><span class="header-section-number">2.2</span> Studiedesign</a>
+  <ul class="collapse">
+  <li><a href="#treningsprotokål" id="toc-treningsprotokål" class="nav-link" data-scroll-target="#treningsprotokål"><span class="header-section-number">2.2.1</span> treningsprotokål</a></li>
+  </ul></li>
+  <li><a href="#datainnsamling" id="toc-datainnsamling" class="nav-link" data-scroll-target="#datainnsamling"><span class="header-section-number">2.3</span> Datainnsamling</a>
+  <ul class="collapse">
+  <li><a href="#målinger-av-kroppdsmasse" id="toc-målinger-av-kroppdsmasse" class="nav-link" data-scroll-target="#målinger-av-kroppdsmasse"><span class="header-section-number">2.3.1</span> målinger av kroppdsmasse</a></li>
+  <li><a href="#måling-av-styrke-test" id="toc-måling-av-styrke-test" class="nav-link" data-scroll-target="#måling-av-styrke-test"><span class="header-section-number">2.3.2</span> Måling av styrke test</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#data-analyse" id="toc-data-analyse" class="nav-link" data-scroll-target="#data-analyse"><span class="header-section-number">3</span> Data analyse</a></li>
+  <li><a href="#resultat" id="toc-resultat" class="nav-link" data-scroll-target="#resultat"><span class="header-section-number">4</span> Resultat</a>
+  <ul class="collapse">
+  <li><a href="#høyere-volum-øker-hypotrofi" id="toc-høyere-volum-øker-hypotrofi" class="nav-link" data-scroll-target="#høyere-volum-øker-hypotrofi"><span class="header-section-number">4.1</span> høyere volum øker hypotrofi</a></li>
+  <li><a href="#styrke" id="toc-styrke" class="nav-link" data-scroll-target="#styrke"><span class="header-section-number">4.2</span> styrke</a></li>
+  </ul></li>
+  <li><a href="#statistisk-programvare" id="toc-statistisk-programvare" class="nav-link" data-scroll-target="#statistisk-programvare"><span class="header-section-number">5</span> Statistisk programvare:</a></li>
+  <li><a href="#etiske-hensyn" id="toc-etiske-hensyn" class="nav-link" data-scroll-target="#etiske-hensyn"><span class="header-section-number">6</span> Etiske hensyn:</a></li>
+  <li><a href="#diskusjon" id="toc-diskusjon" class="nav-link" data-scroll-target="#diskusjon"><span class="header-section-number">7</span> Diskusjon</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Oppgave 5: Analyzing repeated measures experiments</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Trond Steien </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduksjon" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduksjon</h1>
+<p>Dette er oppgave 5: “Analyzing repeated measures experiments” i faget IDR4000-1 24H Kvantitativ metode og statistikk for master i treningsfysiologi. I denne oppgaven har jeg analysert og rapportert om en studie som undersøker hvordan treningsvolum ved styrketrening påvirker mager kroppsmasse og muskelstyrke. Jeg har brukt data fra exscidata-pakken, nærmere bestemt datasettene “strengthvolume” og “dxadata” som ligger i RStudio. Linken til GitHub med alle dokumentene inkludert i rapporten ligger på <a href="https://github.com/Steien/oppgave_5.git">github.com/Steien/oppgave_5.git</a></p>
+<section id="bakgrunn-og-betydning-av-styrketrening" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="bakgrunn-og-betydning-av-styrketrening"><span class="header-section-number">1.1</span> Bakgrunn og betydning av styrketrening</h2>
+<p>Styrketrening drives både for å få bedre fysisk prestasjonsevne, forebygge skade, rehabilitering etter skade, bedre velvære, utseende og for å oppnå god helse <span class="citation" data-cites="raastad">(<a href="#ref-raastad" role="doc-biblioref">Raastad et al., 2010</a>)</span>. Styrketrening utføres i dag av mange ulike grupper, som idrettsutøvere, mosjonister og pasienter under opptrening. Frem til begynnelsen av 2000-tallet var det stor skepsis mot tung styrketrening i et helseperspektiv. Det var bare noen idrettsgrupper som vektløftere, styrkeløftere, brytere, kasteutøvere i friidrett og kroppsbyggere som drev med tung styrketrening. Oppfatningen blant andre idrettsutøvere var at slik trening førte til treghet i muskulaturen og redusert bevegelighet. Denne holdningen har heldigvis endret seg radikalt etterhvert som vi har fått bedre kunnskap om effekten av styrketrening <span class="citation" data-cites="raastad">(<a href="#ref-raastad" role="doc-biblioref">Raastad et al., 2010</a>)</span>.</p>
+<p>På lik linje med kardiovaskulær form er muskelstyrke et fysiologisk trekk som både blir påvirket av fysisk aktivitet, særlig motstandstrening, og genetiske faktorer. Det er imidlertid, sammenlignet med studier på kardiovaskulær form, få studier som har sett på muskelstyrke og dødelighet <span class="citation" data-cites="stensel">(<a href="#ref-stensel" role="doc-biblioref">Stensel et al., 2021</a>)</span>. <span class="citation" data-cites="stensel">Stensel et al. (<a href="#ref-stensel" role="doc-biblioref">2021</a>)</span> skriver også at i prospektive kohortstudier som har sett på både måling av fysisk aktivitet og målinger av styrke eller kardiovaskulær form, har de to sistnevnte betraktelig større positiv effekt på dødelighet. <span class="citation" data-cites="stensel">Stensel et al. (<a href="#ref-stensel" role="doc-biblioref">2021</a>)</span> sier at dette kan skyldes svakheter i selvrapporteringsmålinger av fysisk aktivitet, men det kan også peke på de indre genetiske variablene for kardiovaskulær form eller muskelstyrke som kan påvirke dødelighetsrisiko uavhengig av fysisk aktivitet.</p>
+<p>Studien til <span class="citation" data-cites="hammarstrom">Hammarström et al. (<a href="#ref-hammarstrom" role="doc-biblioref">2020</a>)</span> som vi ser på i denne oppgaven, tar for seg effekten av ulikt treningsvolum på muskelstyrke og muskelvekst i bein hos moderat trente individer. Siden deltakerne er sin egen kontroll ved at de trener hver fot med ulikt volum, kan vi få et bilde av hvordan muskelstyrke og muskelvekst blir påvirket av volum uavhengig av eventuelle genetiske variabler som <span class="citation" data-cites="stensel">Stensel et al. (<a href="#ref-stensel" role="doc-biblioref">2021</a>)</span> nevner.</p>
+</section>
+<section id="treningsvolum-og-muskulære-tilpasninger" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="treningsvolum-og-muskulære-tilpasninger"><span class="header-section-number">1.2</span> Treningsvolum og muskulære tilpasninger</h2>
+<p>Innenfor styrketrening er det primært hvor ofte og hvor hardt hver enkelt muskelgruppe blir trent, som bestemmer treningseffekten. Kombinasjonen av treningsvolum, treningsintensitet, grad av anstrengelse og treningsfrekvens utgjør den totale treningsbelastningen vi utsettes for. Treningsvolumet i hver økt kan grovt regnes som produktet av antall serier X antall repetisjoner X treningsmotstand for den aktuelle muskelgruppen <span class="citation" data-cites="raastad">(<a href="#ref-raastad" role="doc-biblioref">Raastad et al., 2010</a>)</span>.</p>
+<p>Det grunnleggende prinsippet bak et styrke- eller motstandstreningsprogram er overbelastningsprinsippet, som sier at styrkeøkning skjer som et resultat av systematisk og progressiv trening med tilstrekkelig frekvens, intensitet og varighet for å skape tilpasning <span class="citation" data-cites="wackerhage">(<a href="#ref-wackerhage" role="doc-biblioref">Wackerhage, 2014</a>)</span>. Å planlegge et treningsprogram for motstandstrening krever derfor nøye valg av volum, belastning, hvile mellom settene og progresjon. I tillegg bør målene med treningen (styrke, kraft, hypertrofi), type utstyr, tilgjengelighet av utstyr og muskelhandling (eksentrisk, konsentrisk, isometrisk, raskt/tregt) vurderes. Det er også viktig at treningsprogrammet tilpasses individet, da ulike programmer er nødvendige for utrente individer, atleter, barn og pasienter som rehabiliteres etter skade <span class="citation" data-cites="wackerhage">(<a href="#ref-wackerhage" role="doc-biblioref">Wackerhage, 2014</a>)</span>.</p>
+<p>For å få et nøyaktig mål på treningsvolum burde vi ideelt sett måle det indre arbeidet en muskelgruppe utfører for å overvinne ytre motstander. Siden dette i praksis ikke er mulig, kan vi likevel bruke den nevnte metoden for å indikere endringer i treningsvolum over tid, så lenge vi holder oss til de samme øvelsene. Selv om dette ikke gir et fullstendig korrekt bilde av det indre arbeidet en muskelgruppe har utført, gir det en god indikasjon på volumets utvikling <span class="citation" data-cites="raastad">(<a href="#ref-raastad" role="doc-biblioref">Raastad et al., 2010</a>)</span>.</p>
+<p>Selv med et optimalt designet treningsprogram vil omfanget av muskelmasse- og styrkeøkning variere dramatisk mellom individer <span class="citation" data-cites="wackerhage">(<a href="#ref-wackerhage" role="doc-biblioref">Wackerhage, 2014</a>)</span>. Ifølge <span class="citation" data-cites="wackerhage">Wackerhage (<a href="#ref-wackerhage" role="doc-biblioref">2014</a>)</span> er det, basert på pålitelige vitenskapelige data, mye forvirring rundt hva som utgjør et optimalt treningsprogram, og vi kan egentlig ikke si at et universelt optimalt motstandstreningsprogram finnes. I praksis kan vi si at alt fra 1-5 sett med 6-12 repetisjoner, dersom individet trener til utmattelse i settene, vil føre til betydelige økninger i både muskelstørrelse og styrke. Det er imidlertid viktig å være oppmerksom på at forskjeller i motivasjon, gener, ernæring og individuelle mål vil påvirke responsen på treningen og dermed føre til stor variasjon mellom individene <span class="citation" data-cites="wackerhage">(<a href="#ref-wackerhage" role="doc-biblioref">Wackerhage, 2014</a>)</span>.</p>
+<p>Forståelsen av sammenhengen mellom muskulære tilpasninger og volum er avgjørende for effektiv trening. Når vi vet hvordan ulike volum påvirker styrke og hypertrofi, kan vi skreddersy treningsprogrammer som maksimerer resultater for ulike individer <span class="citation" data-cites="raastad">(<a href="#ref-raastad" role="doc-biblioref">Raastad et al., 2010</a>)</span>. Dette er spesielt viktig når vi vet at individuelle forskjeller i respons på trening kan være betydelige. Å ha en solid forståelse av hvordan volumet påvirker muskulære tilpasninger gjør det mulig å optimalisere treningen for spesifikke målsettinger og behov.</p>
+</section>
+<section id="nøkkelbegreper" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="nøkkelbegreper"><span class="header-section-number">1.3</span> Nøkkelbegreper</h2>
+<ul>
+<li><p><strong>Treningsvolum</strong>: Det totale arbeidet utført i en treningsøkt, ofte beregnet som antall sett × antall repetisjoner × vekt <span class="citation" data-cites="raastad">(<a href="#ref-raastad" role="doc-biblioref">Raastad et al., 2010</a>)</span>.</p></li>
+<li><p><strong>Treningsintensitet</strong>: Graden av anstrengelse i forhold til maksimal kapasitet, ofte uttrykt som prosent av 1RM (én repetisjon maksimum) <span class="citation" data-cites="raastad">(<a href="#ref-raastad" role="doc-biblioref">Raastad et al., 2010</a>)</span>.</p></li>
+<li><p><strong>Mager kroppsmasse</strong>: Kroppsvekt minus fettmasse, inkluderer muskler, organer, bein og andre vev<span class="citation" data-cites="wackerhage">(<a href="#ref-wackerhage" role="doc-biblioref">Wackerhage, 2014</a>)</span>.</p></li>
+<li><p><strong>Hypertrofi</strong>: Økning i størrelsen av muskelfibre, som fører til økt muskelmasse <span class="citation" data-cites="raastad">(<a href="#ref-raastad" role="doc-biblioref">Raastad et al., 2010</a>)</span>.</p></li>
+<li><p><strong>Styrke</strong>: Evnen til å generere kraft mot en ytre motstand <span class="citation" data-cites="wackerhage">(<a href="#ref-wackerhage" role="doc-biblioref">Wackerhage, 2014</a>)</span>.</p></li>
+<li><p><strong>Overbelastningsprinsippet</strong>: Konseptet om at muskler må utsettes for en belastning som overstiger deres nåværende kapasitet for å oppnå tilpasning og forbedring <span class="citation" data-cites="wackerhage">(<a href="#ref-wackerhage" role="doc-biblioref">Wackerhage, 2014</a>)</span>.</p></li>
+</ul>
+</section>
+<section id="kunnskapshull-og-forskningsbehov" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="kunnskapshull-og-forskningsbehov"><span class="header-section-number">1.4</span> Kunnskapshull og forskningsbehov</h2>
+<p>Som nevnt av både <span class="citation" data-cites="raastad">Raastad et al. (<a href="#ref-raastad" role="doc-biblioref">2010</a>)</span> og <span class="citation" data-cites="stensel">Stensel et al. (<a href="#ref-stensel" role="doc-biblioref">2021</a>)</span> er motstandstrening og effekten muskelmasse og styrke har på helsen vår og prestasjon, både i idrett (med unntak av noen få sporter) og i hverdagen til folk, et relativt nytt forskningsområde. Vi har en mye større forståelse av hvordan kardiovaskulær form påvirker helsen vår og hvordan vi bør trene for å forbedre kondisjonen, da det er mye mer forskning på dette området. Vi ser imidlertid at det er flere helsefordeler med motstandstrening, økt styrke og muskelmasse, spesielt ettersom vi blir eldre (ny referanse for å dekke kravet om 5 referanser? Finn en referanse senere, jeg vet jeg har lest det et sted). At vi får mer forskning som ser på hvordan forskjellige former og volum av motstandstrening påvirker vår evne til å bygge mer muskler og/eller styrke, er med på å fylle dette kunnskapshullet.</p>
+<p>Da jeg begynte å trene for 19 år siden, var det vanlig “bro science” at høyt volum og moderate vekter var best for å bygge mest muskler, mens lavt volum med høye vekter var best for å bygge mest styrke. Jeg har sett mer forskning de senere årene som tyder på at dette ikke nødvendigvis er helt sant, og at begge treningsmetodene har en større overlapp enn det vi tidligere trodde.</p>
+</section>
+<section id="forskningspørsmål" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="forskningspørsmål"><span class="header-section-number">1.5</span> Forskningspørsmål</h2>
+<p>Hvordan påvirker ulike treningsvolum (ett sett vs.&nbsp;tre sett) muskelhypertrofi og styrkeøkning i underekstremitetene hos moderat trente individer over en 12-ukers treningsperiode, og er det forskjeller i responsen mellom kjønn?</p>
+</section>
+</section>
+<section id="metode" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Metode</h1>
+<p>Denne studien undersøkte effekten av treningsvolum på muskelhypertrofi og styrke ved å sammenligne ett sett mot tre sett i beinøvelser. Metoden inkluderer beskrivelse av deltakere, studiedesign, treningsprotokoll og datainnsamlingsprosedyrer.</p>
+<section id="deltagere" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="deltagere"><span class="header-section-number">2.1</span> Deltagere</h2>
+<p>Studien rekrutterte opprinnelig 41 deltakere i alderen 18 til 40 år. Inklusjonskriteriene omfattet at deltakerne måtte være ikke-røykere og ha begrenset erfaring med styrketrening, definert som ikke mer enn én ukentlig styrketreningsøkt i løpet av de siste 12 månedene før studien. Eksklusjonskriterier inkluderte intoleranse mot lokalbedøvelse, nedsatt muskelstyrke på grunn av tidligere eller nåværende skade, og bruk av reseptbelagte medisiner som kunne påvirke treningsadaptasjoner. I løpet av studien ble syv deltakere (fire kvinner og tre menn) ekskludert fordi de ikke fullførte minst 85% av de planlagte treningsøktene.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Vis kode</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-participants</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Deltagerkarakteristikker (gjennomsnitt (standardavvik))"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(exscidata)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>dxadata <span class="sc">%&gt;%</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(time <span class="sc">==</span> <span class="st">"pre"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>         include <span class="sc">==</span> <span class="st">"incl"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(participant, sex, age, height, weight) <span class="sc">%&gt;%</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">names_to =</span> <span class="st">"variable"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>               <span class="at">cols =</span> age<span class="sc">:</span>weight) <span class="sc">%&gt;%</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">.by =</span> <span class="fu">c</span>(sex, variable),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">m =</span> <span class="fu">mean</span>(value),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="fu">sd</span>(value),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sex =</span> <span class="fu">paste0</span>(<span class="fu">if_else</span>(sex <span class="sc">==</span> <span class="st">"male"</span>, <span class="st">"Mann"</span>, <span class="st">"Kvinne"</span>), <span class="st">", n = "</span>, n),</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">stat =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(m, <span class="dv">1</span>),</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                       <span class="st">" ("</span>, <span class="fu">round</span>(s, <span class="dv">1</span>), <span class="st">")"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sex, variable, stat) <span class="sc">%&gt;%</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> stat) <span class="sc">%&gt;%</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">sex =</span> <span class="st">""</span>,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>             <span class="at">age =</span> <span class="st">"Alder (\u00E5r)"</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>             <span class="at">weight =</span> <span class="st">"Kroppsmasse (kg)"</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>             <span class="at">height =</span> <span class="st">"H\u00F8yde (cm)"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">source_note =</span> <span class="st">"Verdier er presentert som gjennomsnitt (standardavvik)"</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="pzzbewxkyr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#pzzbewxkyr table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#pzzbewxkyr thead, #pzzbewxkyr tbody, #pzzbewxkyr tfoot, #pzzbewxkyr tr, #pzzbewxkyr td, #pzzbewxkyr th {
+  border-style: none;
+}
+
+#pzzbewxkyr p {
+  margin: 0;
+  padding: 0;
+}
+
+#pzzbewxkyr .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#pzzbewxkyr .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#pzzbewxkyr .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#pzzbewxkyr .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#pzzbewxkyr .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#pzzbewxkyr .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#pzzbewxkyr .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#pzzbewxkyr .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#pzzbewxkyr .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#pzzbewxkyr .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#pzzbewxkyr .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#pzzbewxkyr .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#pzzbewxkyr .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#pzzbewxkyr .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#pzzbewxkyr .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pzzbewxkyr .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#pzzbewxkyr .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#pzzbewxkyr .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#pzzbewxkyr .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pzzbewxkyr .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#pzzbewxkyr .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pzzbewxkyr .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#pzzbewxkyr .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pzzbewxkyr .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pzzbewxkyr .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pzzbewxkyr .gt_left {
+  text-align: left;
+}
+
+#pzzbewxkyr .gt_center {
+  text-align: center;
+}
+
+#pzzbewxkyr .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#pzzbewxkyr .gt_font_normal {
+  font-weight: normal;
+}
+
+#pzzbewxkyr .gt_font_bold {
+  font-weight: bold;
+}
+
+#pzzbewxkyr .gt_font_italic {
+  font-style: italic;
+}
+
+#pzzbewxkyr .gt_super {
+  font-size: 65%;
+}
+
+#pzzbewxkyr .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#pzzbewxkyr .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#pzzbewxkyr .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#pzzbewxkyr .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#pzzbewxkyr .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#pzzbewxkyr .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#pzzbewxkyr .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#pzzbewxkyr .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#pzzbewxkyr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="sex" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="age" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Alder (år)</th>
+<th id="height" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Høyde (cm)</th>
+<th id="weight" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Kroppsmasse (kg)</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="sex">Kvinne, n = 18</td>
+<td class="gt_row gt_right" headers="age">22 (1.3)</td>
+<td class="gt_row gt_right" headers="height">167.7 (6.9)</td>
+<td class="gt_row gt_right" headers="weight">64.4 (10.4)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="sex">Mann, n = 16</td>
+<td class="gt_row gt_right" headers="age">23.6 (4.1)</td>
+<td class="gt_row gt_right" headers="height">182.9 (5.9)</td>
+<td class="gt_row gt_right" headers="weight">75.8 (10.7)</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="4" class="gt_sourcenote">Verdier er presentert som gjennomsnitt (standardavvik)</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+<p>Alle inkluderte deltakere rapporterte tidligere erfaring med sportslige aktiviteter. Tjue deltakere oppga at de var engasjert i fysisk trening ved studiestart (median antall økter per uke: 2, spennvidde: 0,5-4), hvorav 10 utførte sporadisk styrketrening, men ingen mer enn én gang i uken.</p>
+</section>
+<section id="studiedesign" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="studiedesign"><span class="header-section-number">2.2</span> Studiedesign</h2>
+<p>Denne studien brukte en within-subject design, hvor hver deltaker fungerte som sin egen kontroll. Deltakerne trente ett bein med ett sett (single-set condition) og det andre beinet med tre sett (multiple-set condition) per øvelse. Tildelingen av treningsvolum til hvert bein var randomisert for hver deltaker. Denne designen muliggjør en direkte sammenligning av effekten av treningsvolum på muskelhypertrofi og styrke innenfor samme individ, noe som reduserer påvirkningen av individuelle forskjeller.</p>
+<section id="treningsprotokål" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="treningsprotokål"><span class="header-section-number">2.2.1</span> treningsprotokål</h3>
+<p>Intervensjonen bestod av 12 uker med helkropps styrketrening. Treningsprogrammet fokuserte spesielt på beinøvelser, som ble utført unilateralt for å muliggjøre differensiering av treningsvolum innenfor hver deltaker. Beinøvelsene inkluderte unilateral beinpress, leg curl og kneekstensjon. For beinet som var tildelt single-set condition, ble det utført ett sett av hver øvelse, mens for beinet tildelt multiple-set condition ble det utført tre sett. Treningsintensiteten ble gradvis økt gjennom intervensjonen, startende med 10RM de første to ukene, etterfulgt av 8RM i tre uker, og avsluttende med 7RM i syv uker.</p>
+</section>
+</section>
+<section id="datainnsamling" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="datainnsamling"><span class="header-section-number">2.3</span> Datainnsamling</h2>
+<p>For å besvare forskningsspørsmålet ble det samlet inn data om deltakernes kroppssammensetning og muskelstyrke. Datainnsamlingen fokuserte på to hovedområder: målinger av mager kroppsmasse og vurdering av muskelstyrke gjennom ulike styrketester.</p>
+<section id="målinger-av-kroppdsmasse" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="målinger-av-kroppdsmasse"><span class="header-section-number">2.3.1</span> målinger av kroppdsmasse</h3>
+<p>Mager kroppsmasse ble målt ved hjelp av dual-energy X-ray absorptiometry (DXA) før og etter treningsintervensjonen. DXA-skanningen ble utført i henhold til standardprotokoll, og ga detaljert informasjon om kroppssammensetning, inkludert mager masse i begge bein. Deltakerne ble bedt om å faste i 2 timer og avstå fra hard fysisk aktivitet i 48 timer før målingene for å sikre konsistente forhold.</p>
+</section>
+<section id="måling-av-styrke-test" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="måling-av-styrke-test"><span class="header-section-number">2.3.2</span> Måling av styrke test</h3>
+<p>Muskelstyrke ble vurdert gjennom flere tester En repetisjon maksimum (1RM) ble målt i unilateral beinpress og kneekstensjon. Testen startet med en spesifikk oppvarming, etterfulgt av progressive økninger i vekt til deltakeren ikke kunne løfte vekten gjennom full bevegelsesbane.Isokinetisk og isometrisk unilateral kneekstensjonsstyrke ble målt ved hjelp av et dynamometer. Isokinetisk styrke ble testet ved tre vinkelhastigheter (60°, 120° og 240° per sekund), mens isometrisk styrke ble målt ved en knevinkel på 30°.</p>
+<p>Disse styrketestene ble utført før intervensjonen startet og etter at den 12-ukers treningsperioden var fullført. For baselinemålingene ble styrketestene utført to ganger, med minst fire dagers mellomrom, og den høyeste verdien ble brukt i analysene.</p>
+</section>
+</section>
+</section>
+<section id="data-analyse" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Data analyse</h1>
+<p>For å undersøke effekten av treningsvolum på muskelhypertrofi, ble dataene fra Hammarström et al.&nbsp;(2020) analysert. Datasettet inneholdt målinger av mager kroppsmasse for venstre og høyre bein hos hver deltaker, før og etter intervensjonen. Dataene ble behandlet ved å beregne endringen i mager kroppsmasse for hvert bein, og deretter kategorisere disse endringene basert på treningsvolumet (ett sett eller tre sett). Den primære statistiske metoden som ble brukt var en paret t-test for å sammenligne endringene i mager kroppsmasse mellom ett og tre sett. Denne metoden ble valgt på grunn av studiens within-subject design, hvor hvert individ fungerte som sin egen kontroll.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Vis kode</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(exscidata)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Last inn data</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dxadata <span class="sc">%&gt;%</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(participant<span class="sc">:</span>include, lean.left_leg, lean.right_leg) <span class="sc">%&gt;%</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">names_to =</span> <span class="st">"leg"</span>, </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"lean.mass"</span>, </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">cols =</span> lean.left_leg<span class="sc">:</span>lean.right_leg) <span class="sc">%&gt;%</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">leg =</span> <span class="fu">if_else</span>(leg <span class="sc">==</span> <span class="st">"lean.left_leg"</span>, <span class="st">"L"</span>, <span class="st">"R"</span>), </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">sets =</span> <span class="fu">if_else</span>(multiple <span class="sc">==</span> leg, <span class="st">"multiple"</span>, <span class="st">"single"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(participant, time, sex, include, sets, leg, lean.mass) <span class="sc">%&gt;%</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(include <span class="sc">==</span> <span class="st">"incl"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="st">"time"</span>, </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="st">"lean.mass"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">change =</span> post <span class="sc">-</span> pre) <span class="sc">%&gt;%</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(participant<span class="sc">:</span>sets, change) <span class="sc">%&gt;%</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> sets, <span class="at">values_from =</span> change) </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>t_resultater <span class="ot">&lt;-</span> <span class="fu">with</span>(dat, <span class="fu">t.test</span>(multiple, single, <span class="at">paired =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Skriv ut t-test resultatene</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>pverdi <span class="ot">&lt;-</span> <span class="fu">round</span>(t_resultater<span class="sc">$</span>p.value, <span class="dv">3</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>tverdi <span class="ot">&lt;-</span> <span class="fu">round</span>(t_resultater<span class="sc">$</span>statistic, <span class="dv">2</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> t_resultater<span class="sc">$</span>parameter</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>cil <span class="ot">&lt;-</span> <span class="fu">round</span>(t_resultater<span class="sc">$</span>conf.int[<span class="dv">1</span>], <span class="dv">1</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>ciu <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%.1f"</span>, <span class="fu">round</span>(t_resultater<span class="sc">$</span>conf.int[<span class="dv">2</span>], <span class="dv">1</span>))</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>estimat <span class="ot">&lt;-</span> <span class="fu">round</span>(t_resultater<span class="sc">$</span>estimate, <span class="dv">1</span>)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>lean.mass.resultater <span class="ot">&lt;-</span> <span class="fu">paste0</span>(estimat, </span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>                            <span class="st">" (95% KI: ["</span>, </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                            cil, </span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                            <span class="st">", "</span>, </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>                            ciu, </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"], P-verdi = "</span>, </span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>                            pverdi, </span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>                            <span class="st">", t&lt;sub&gt;"</span>, </span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                            df, <span class="st">"&lt;/sub&gt; = "</span>, </span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                            tverdi, <span class="st">")"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Vis kode</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-boxplot</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Fordeling av endringer i mager kroppsmasse etter treningsvolum og kjønn."</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Last inn nødvendige biblioteker</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Forbered data for plotting</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dxadata <span class="sc">%&gt;%</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(include <span class="sc">==</span> <span class="st">"incl"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(participant, time, sex, multiple, lean.left_leg, lean.right_leg) <span class="sc">%&gt;%</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(lean.left_leg, lean.right_leg), </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"leg"</span>, </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"lean_mass"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">leg =</span> <span class="fu">if_else</span>(leg <span class="sc">==</span> <span class="st">"lean.left_leg"</span>, <span class="st">"L"</span>, <span class="st">"R"</span>),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">sets =</span> <span class="fu">if_else</span>(multiple <span class="sc">==</span> leg, <span class="st">"Tre sett"</span>, <span class="st">"Ett sett"</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> time, <span class="at">values_from =</span> lean_mass) <span class="sc">%&gt;%</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">change =</span> post <span class="sc">-</span> pre)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Lag boxplot</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>boxplot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> sets, <span class="at">y =</span> change, <span class="at">fill =</span> sets)) <span class="sc">+</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>sex, <span class="at">labeller =</span> <span class="fu">as_labeller</span>(<span class="fu">c</span>(<span class="st">"female"</span> <span class="ot">=</span> <span class="st">"Kvinner"</span>, <span class="st">"male"</span> <span class="ot">=</span> <span class="st">"Menn"</span>))) <span class="sc">+</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Endring i mager masse etter treningsvolum og kj\u00F8nn"</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Treningsvolum"</span>,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Endring i mager masse (g)"</span>,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Antall sett"</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(boxplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="rapporten_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>?@fig-boxplot</strong> viser fordelingen av endringer i mager kroppsmasse for ett sett og tre sett, oppdelt etter kjønn. Boxplottet gir en visuell representasjon av median, kvartiler og spredning i dataene. Som vi kan se, er det en tendens til større økning i mager masse ved tre sett sammenlignet med ett sett, spesielt hos menn.</p>
+<p>For å få et mer detaljert bilde av individuelle responser, ble det også laget et lineplot som viser endringer for hver enkelt deltaker:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Vis kode</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lag lineplot for individuelle endringer</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> sets, <span class="at">y =</span> change, <span class="at">group =</span> participant, <span class="at">color =</span> sex)) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>sex, <span class="at">labeller =</span> <span class="fu">as_labeller</span>(<span class="fu">c</span>(<span class="st">"female"</span> <span class="ot">=</span> <span class="st">"Kvinner"</span>, <span class="st">"male"</span> <span class="ot">=</span> <span class="st">"Menn"</span>))) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Individuelle endringer i mager masse"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Treningsvolum"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Endring i mager masse (g)"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Kj\u00F8nn"</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-lineplot" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lineplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="rapporten_files/figure-html/fig-lineplot-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figur&nbsp;1: Individuelle endringer i mager kroppsmasse fra pre- til post-intervensjon.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-lineplot" class="quarto-xref">Figure&nbsp;1</a> illustrerer de individuelle endringene i mager kroppsmasse for hver deltaker. Hver linje representerer en deltaker, og viser endringen fra ett sett til tre sett. Dette plottet avslører den betydelige variasjonen i individuell respons på treningsvolumet, med noen deltakere som viser større økning ved tre sett, mens andre viser liten forskjell eller til og med større økning ved ett sett.</p>
+<p>For å undersøke forholdet mellom pre- og post-intervensjonsverdier og hvordan dette påvirkes av treningsvolum, ble det laget et scatterplot:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Vis kode</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lag scatterplot for pre-post sammenligning</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> pre, <span class="at">y =</span> post, <span class="at">color =</span> sets, <span class="at">shape =</span> sets)) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>sex, <span class="at">labeller =</span> <span class="fu">as_labeller</span>(<span class="fu">c</span>(<span class="st">"female"</span> <span class="ot">=</span> <span class="st">"Kvinner"</span>, <span class="st">"male"</span> <span class="ot">=</span> <span class="st">"Menn"</span>))) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Ett sett"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"Tre sett"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_shape_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Ett sett"</span> <span class="ot">=</span> <span class="dv">16</span>, <span class="st">"Tre sett"</span> <span class="ot">=</span> <span class="dv">17</span>)) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Pre-intervensjon mager masse (g)"</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Post-intervensjon mager masse (g)"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Antall sett"</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="st">"Antall sett"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Endring i mager masse fra pre- til post-intervensjon"</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>(<span class="at">ratio=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept=</span><span class="dv">0</span>, <span class="at">slope=</span><span class="dv">1</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">color=</span><span class="st">"gray50"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-scatterplot" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scatterplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="rapporten_files/figure-html/fig-scatterplot-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scatterplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figur&nbsp;2: Forholdet mellom pre- og post-intervensjonsverdier for mager masse.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-scatterplot" class="quarto-xref">Figure&nbsp;2</a> viser forholdet mellom pre- og post-intervensjonsverdier for mager masse, med separate punkter og regresjonslinjer for ett sett og tre sett. Punkter over den stiplede linjen indikerer en økning i mager masse. Som vi kan se, ligger de fleste punktene over denne linjen, noe som tyder på en generell økning i mager masse for begge treningsvolum. Regresjonslinjen for tre sett ligger generelt høyere enn for ett sett, noe som antyder en større økning i mager masse ved høyere treningsvolum.</p>
+<p>For å kvantifisere disse observasjonene, ble en paret t-test utført. Resultatene viste at den gjennomsnittlige forskjellen i endring av mager kroppsmasse mellom settbetingelsene var 122.8 (95% KI: [8.6, 237.0], P-verdi = 0.036, t<sub>33</sub> = 2.19) Dette indikerer en statistisk signifikant større økning i mager masse ved tre sett sammenlignet med ett sett.</p>
+<p>I alle plottene ble dataene oppdelt etter kjønn for å muliggjøre en visuell vurdering av eventuelle kjønnsforskjeller i responsen på treningsvolumet. Selv om det ser ut til å være noen forskjeller mellom menn og kvinner i responsen på treningsvolum, ble ikke disse forskjellene formelt testet i denne analysen.</p>
+<p>Forklar hvordan du har behandlet dataene . Beskriv de statistiske metodene du har brukt: a) Paret t-test for å sammenligne endringer mellom ett og tre sett. (b Mixed-effects modell for å analysere effekten av tid og treningsvolum. gjør dette senere kanskje) Nevn at du har undersøkt kjønnsforskjeller ved å inkludere kjønn som en faktor i analysene.</p>
+</section>
+<section id="resultat" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Resultat</h1>
+<section id="høyere-volum-øker-hypotrofi" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="høyere-volum-øker-hypotrofi"><span class="header-section-number">4.1</span> høyere volum øker hypotrofi</h2>
+</section>
+<section id="styrke" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="styrke"><span class="header-section-number">4.2</span> styrke</h2>
+</section>
+</section>
+<section id="statistisk-programvare" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Statistisk programvare:</h1>
+<pre><code>Nevn at du har brukt R og relevante pakker (tidyverse, exscidata, lme4) for databehandling og analyse.</code></pre>
+</section>
+<section id="etiske-hensyn" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Etiske hensyn:</h1>
+<pre><code>Nevn kort at studien fulgte etiske retningslinjer (hvis denne informasjonen er tilgjengelig).</code></pre>
+</section>
+<section id="diskusjon" class="level1 unnumbered" data-number="7">
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">7 Diskusjon</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-hammarstrom" class="csl-entry" role="listitem">
+Hammarström, D., Øfsteng, S., Koll, L., Hanestadhaugen, M., Hollan, I., Apró, W., Whist, J. E., Blomstrand, E., Rønnestad, B. R., &amp; Ellefsen, S. (2020). Dose-dependent effects of resistance training volume on leg muscle strength and hypertrophy. <em>The Journal of Physiology</em>, <em>598</em>(14), 3077–3088. <a href="https://doi.org/10.1113/JP278455">https://doi.org/10.1113/JP278455</a>
+</div>
+<div id="ref-raastad" class="csl-entry" role="listitem">
+Raastad, T., Paulsen, G., Refsnes, P. E., Rønnestad, B. R., &amp; Wisnes, A. R. (2010). <em>Styrketrening - i teori og praksis</em>. Gyldendal undervisning.
+</div>
+<div id="ref-stensel" class="csl-entry" role="listitem">
+Stensel, D. J., Hardman, A. E., &amp; Gill, J. M. R. (2021). <em>Physical activity and health: The evidence explained</em>. Routledge.
+</div>
+<div id="ref-wackerhage" class="csl-entry" role="listitem">
+Wackerhage, H. (Ed.). (2014). <em>Molecular exercise physiology: An introduction</em>. Routledge.
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
