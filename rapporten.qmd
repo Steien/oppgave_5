@@ -44,20 +44,6 @@ Selv med et optimalt designet treningsprogram vil omfanget av muskelmasse- og st
 
 Forståelsen av sammenhengen mellom muskulære tilpasninger og volum er avgjørende for effektiv trening. Når vi vet hvordan ulike volum påvirker styrke og hypertrofi, kan vi skreddersy treningsprogrammer som maksimerer resultater for ulike individer [@raastad]. Dette er spesielt viktig når vi vet at individuelle forskjeller i respons på trening kan være betydelige. Å ha en solid forståelse av hvordan volumet påvirker muskulære tilpasninger gjør det mulig å optimalisere treningen for spesifikke målsettinger og behov.
 
-## Nøkkelbegreper
-
--   **Treningsvolum**: Det totale arbeidet utført i en treningsøkt, ofte beregnet som antall sett × antall repetisjoner × vekt [@raastad].
-
--   **Treningsintensitet**: Graden av anstrengelse i forhold til maksimal kapasitet, ofte uttrykt som prosent av 1RM (én repetisjon maksimum) [@raastad].
-
--   **Mager kroppsmasse**: Kroppsvekt minus fettmasse, inkluderer muskler, organer, bein og andre vev[@wackerhage].
-
--   **Hypertrofi**: Økning i størrelsen av muskelfibre, som fører til økt muskelmasse [@raastad].
-
--   **Styrke**: Evnen til å generere kraft mot en ytre motstand [@wackerhage].
-
--   **Overbelastningsprinsippet**: Konseptet om at muskler må utsettes for en belastning som overstiger deres nåværende kapasitet for å oppnå tilpasning og forbedring [@wackerhage].
-
 ## Kunnskapshull og forskningsbehov
 
 Som nevnt av både @raastad og @stensel er motstandstrening og effekten muskelmasse og styrke har på helsen vår og prestasjon, både i idrett (med unntak av noen få sporter) og i hverdagen til folk, et relativt nytt forskningsområde. Vi har en mye større forståelse av hvordan kardiovaskulær form påvirker helsen vår og hvordan vi bør trene for å forbedre kondisjonen, da det er mye mer forskning på dette området. Vi ser imidlertid at det er flere helsefordeler med motstandstrening, økt styrke og muskelmasse, spesielt ettersom vi blir eldre (ny referanse for å dekke kravet om 5 referanser? Finn en referanse senere, jeg vet jeg har lest det et sted). At vi får mer forskning som ser på hvordan forskjellige former og volum av motstandstrening påvirker vår evne til å bygge mer muskler og/eller styrke, er med på å fylle dette kunnskapshullet.
@@ -66,7 +52,7 @@ Da jeg begynte å trene for 19 år siden, var det vanlig "bro science" at høyt 
 
 ## Forskningspørsmål
 
-Hvordan påvirker ulike treningsvolum (ett sett vs. tre sett) muskelhypertrofi og styrkeøkning i underekstremitetene hos moderat trente individer over en 12-ukers treningsperiode, og er det forskjeller i responsen mellom kjønn?
+Hvordan påvirker ulike treningsvolum (ett sett vs. tre sett) muskelhypertrofi i underekstremitetene hos moderat trente individer over en 12-ukers treningsperiode, og er det forskjeller i responsen mellom kjønn?
 
 # Metode
 
@@ -139,14 +125,41 @@ Disse styrketestene ble utført før intervensjonen startet og etter at den 12-u
 
 # Data analyse
 
-For å undersøke effekten av treningsvolum på muskelhypertrofi, ble dataene fra Hammarström et al. (2020) analysert. Datasettet inneholdt målinger av mager kroppsmasse for venstre og høyre bein hos hver deltaker, før og etter intervensjonen. Dataene ble behandlet ved å beregne endringen i mager kroppsmasse for hvert bein, og deretter kategorisere disse endringene basert på treningsvolumet (ett sett eller tre sett). Den primære statistiske metoden som ble brukt var en paret t-test for å sammenligne endringene i mager kroppsmasse mellom ett og tre sett. Denne metoden ble valgt på grunn av studiens within-subject design, hvor hvert individ fungerte som sin egen kontroll.
+```{r}
+library(tidyverse)
+library(exscidata)
+
+#forberede datasettet
+dat <- dxadata %>%
+  # Filtrer ut deltakere som ikke er inkludert i analysen
+  filter(include == "incl") %>%
+   # Velg relevante kolonner for analysen
+  select(participant, time, sex, multiple, lean.left_leg, lean.right_leg) %>%
+    # Omform data fra bredt til langt format for beinmålinger
+  pivot_longer(cols = c(lean.left_leg, lean.right_leg), 
+               names_to = "leg", 
+               values_to = "lean_mass") %>%
+  # Lag nye variabler for bein (L/R) og antall sett
+  mutate(
+    leg = if_else(leg == "lean.left_leg", "L", "R"),
+    sets = if_else(multiple == leg, "Tre sett", "Ett sett")
+  ) %>%
+  # Omform data fra langt til bredt format for tid (pre/post)
+  pivot_wider(names_from = time, values_from = lean_mass) %>%
+  # Beregn endring i mager masse fra pre til post
+  mutate(change = post - pre)
+
+
+```
+
+For å undersøke effekten av treningsvolum på muskelhypertrofi, ble dataene fra @hammarstrom analysert. Datasettet inneholdt målinger av mager kroppsmasse for venstre og høyre bein hos hver deltaker, før og etter intervensjonen. Dataene ble behandlet ved å beregne endringen i mager kroppsmasse for hvert bein, og deretter kategorisere disse endringene basert på treningsvolumet (ett sett eller tre sett). Den primære statistiske metoden som ble brukt var en paret t-test for å sammenligne endringene i mager kroppsmasse mellom ett og tre sett. Denne metoden ble valgt på grunn av studiens within-subject design, hvor hvert individ fungerte som sin egen kontroll.
 
 ```{r}
-
-
 library(tidyverse)
 library(exscidata)
 library(lme4)
+
+# Her en paret t-test for å sammenligne endringer mellom ett og tre sett.
 
 # Last inn data
 dat <- dxadata %>%
@@ -188,16 +201,36 @@ lean.mass.resultater <- paste0(estimat,
 ```
 
 ```{r}
+#| label: detailed-t-test-results
+#| echo: false
 
-#| label: fig-boxplot
-#| fig-cap: "Fordeling av endringer i mager kroppsmasse etter treningsvolum og kjønn."
+# Utfør t-testen
+t_resultater <- with(dat, t.test(multiple, single, paired = TRUE))
 
+# Beregn og lagre resultatene
+gj_forskjell <- round(t_resultater$estimate, 1)
+konfidensintervall <- paste0("[", round(t_resultater$conf.int[1], 1), ", ", round(t_resultater$conf.int[2], 1), "]")
+p_verdi <- round(t_resultater$p.value, 3)
+t_statistikk <- round(t_resultater$statistic, 2)
+frihetsgrader <- t_resultater$parameter
 
-# Last inn nødvendige biblioteker
-library(ggplot2)
-library(dplyr)
+# Lag en streng med alle resultatene for å kunne referere i teksten
+detaljerte_resultater <- paste0(
+  "Gjennomsnittlig forskjell: ", gj_forskjell, " g ",
+  "(95% KI: ", konfidensintervall, "), ",
+  "p-verdi = ", p_verdi, ", ",
+  "t(", frihetsgrader, ") = ", t_statistikk
+)
 
-# Forbered data for plotting
+```
+
+For å få et mer detaljert bilde av individuelle responser, ble det laget laget et lineplot som viser endringer for hver enkelt deltaker:
+
+```{r}
+#| label: fig-lineplot
+#| fig-cap: "Individuelle endringer i mager kroppsmasse fra pre- til post-intervensjon."
+
+# Redefiner datasettet 
 dat <- dxadata %>%
   filter(include == "incl") %>%
   select(participant, time, sex, multiple, lean.left_leg, lean.right_leg) %>%
@@ -210,32 +243,6 @@ dat <- dxadata %>%
   ) %>%
   pivot_wider(names_from = time, values_from = lean_mass) %>%
   mutate(change = post - pre)
-
-# Lag boxplot
-boxplot <- ggplot(dat, aes(x = sets, y = change, fill = sets)) +
-  geom_boxplot() +
-  geom_jitter(width = 0.2, alpha = 0.5) +
-  facet_wrap(~sex, labeller = as_labeller(c("female" = "Kvinner", "male" = "Menn"))) +
-  labs(
-    title = "Endring i mager masse etter treningsvolum og kj\u00F8nn",
-    x = "Treningsvolum",
-    y = "Endring i mager masse (g)",
-    fill = "Antall sett"
-  ) +
-  theme_minimal()
-
-print(boxplot)
-
-```
-
-@fig-boxplot viser fordelingen av endringer i mager kroppsmasse for ett sett og tre sett, oppdelt etter kjønn. Boxplottet gir en visuell representasjon av median, kvartiler og spredning i dataene. Som vi kan se, er det en tendens til større økning i mager masse ved tre sett sammenlignet med ett sett, spesielt hos menn.
-
-For å få et mer detaljert bilde av individuelle responser, ble det også laget et lineplot som viser endringer for hver enkelt deltaker:
-
-```{r}
-#| label: fig-lineplot
-#| fig-cap: "Individuelle endringer i mager kroppsmasse fra pre- til post-intervensjon."
-
 # Lag lineplot for individuelle endringer
 ggplot(dat, aes(x = sets, y = change, group = participant, color = sex)) +
   geom_line(alpha = 0.5) +
@@ -245,9 +252,10 @@ ggplot(dat, aes(x = sets, y = change, group = participant, color = sex)) +
     title = "Individuelle endringer i mager masse",
     x = "Treningsvolum",
     y = "Endring i mager masse (g)",
-    color = "Kj\u00F8nn"
+    color = "Kjønn"
   ) +
   theme_minimal()
+
 ```
 
 @fig-lineplot illustrerer de individuelle endringene i mager kroppsmasse for hver deltaker. Hver linje representerer en deltaker, og viser endringen fra ett sett til tre sett. Dette plottet avslører den betydelige variasjonen i individuell respons på treningsvolumet, med noen deltakere som viser større økning ved tre sett, mens andre viser liten forskjell eller til og med større økning ved ett sett.
@@ -257,7 +265,7 @@ For å undersøke forholdet mellom pre- og post-intervensjonsverdier og hvordan 
 ```{r}
 #| label: fig-scatterplot
 #| fig-cap: "Forholdet mellom pre- og post-intervensjonsverdier for mager masse."
-
+#| 
 # Lag scatterplot for pre-post sammenligning
 ggplot(dat, aes(x = pre, y = post, color = sets, shape = sets)) +
   geom_point(size = 3, alpha = 0.7) +
@@ -276,33 +284,88 @@ ggplot(dat, aes(x = pre, y = post, color = sets, shape = sets)) +
   theme(legend.position="bottom") +
   coord_fixed(ratio=1) +
   geom_abline(intercept=0, slope=1, linetype="dashed", color="gray50")
-
 ```
 
 @fig-scatterplot viser forholdet mellom pre- og post-intervensjonsverdier for mager masse, med separate punkter og regresjonslinjer for ett sett og tre sett. Punkter over den stiplede linjen indikerer en økning i mager masse. Som vi kan se, ligger de fleste punktene over denne linjen, noe som tyder på en generell økning i mager masse for begge treningsvolum. Regresjonslinjen for tre sett ligger generelt høyere enn for ett sett, noe som antyder en større økning i mager masse ved høyere treningsvolum.
 
-For å kvantifisere disse observasjonene, ble en paret t-test utført. Resultatene viste at den gjennomsnittlige forskjellen i endring av mager kroppsmasse mellom settbetingelsene var `r lean.mass.resultater` Dette indikerer en statistisk signifikant større økning i mager masse ved tre sett sammenlignet med ett sett.
+```{r}
 
-I alle plottene ble dataene oppdelt etter kjønn for å muliggjøre en visuell vurdering av eventuelle kjønnsforskjeller i responsen på treningsvolumet. Selv om det ser ut til å være noen forskjeller mellom menn og kvinner i responsen på treningsvolum, ble ikke disse forskjellene formelt testet i denne analysen.
+#| label: fig-boxplot
+#| fig-cap: "Fordeling av endringer i mager kroppsmasse etter treningsvolum og kjønn."
 
-Forklar hvordan du har behandlet dataene . Beskriv de statistiske metodene du har brukt: a) Paret t-test for å sammenligne endringer mellom ett og tre sett. (b Mixed-effects modell for å analysere effekten av tid og treningsvolum. gjør dette senere kanskje) Nevn at du har undersøkt kjønnsforskjeller ved å inkludere kjønn som en faktor i analysene.
+# Lag boxplot for å vise fordelingen av endringer
+ggplot(dat, aes(x = sets, y = change, fill = sets)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, alpha = 0.5) +
+  facet_wrap(~sex, labeller = as_labeller(c("female" = "Kvinner", "male" = "Menn"))) +
+  labs(
+    title = "Endring i mager masse etter treningsvolum og kjønn",
+    x = "Treningsvolum",
+    y = "Endring i mager masse (g)",
+    fill = "Antall sett"
+  ) +
+  theme_minimal()
+
+```
+
+@fig-boxplot viser fordelingen av endringer i mager kroppsmasse for ett sett og tre sett, oppdelt etter kjønn. Boxplottet gir en visuell representasjon av median, kvartiler og spredning i dataene. Som vi kan se, er det en tendens til større økning i mager masse ved tre sett sammenlignet med ett sett, spesielt hos menn. Vi observerer betydelig individuell variasjon hos begge kjønn, noe som vises gjennom spredningen av datapunktene. Til tross for denne variasjonen, ser vi en generell trend mot større økning i mager masse ved tre sett hos både kvinner og menn.
+
+## t-test
+
+For å kvantifisere disse observasjonene ble en paret t-test utført. Resultatene viste en statistisk signifikant forskjell i endring av mager kroppsmasse mellom settbetingelsene (`r lean.mass.resultater`). Dette indikerer at tre sett i gjennomsnitt ga `r estimat` gram større økning i mager kroppsmasse sammenlignet med ett sett i underekstremitetene.
+
+Konfidensintervallet `r paste0("[", cil, ", ", ciu, "]")` betyr at vi med 95% sikkerhet kan si at den sanne gjennomsnittlige forskjellen i populasjonen ligger mellom disse verdiene. Siden intervallet ikke inkluderer 0, støtter dette at forskjellen er statistisk signifikant.
+
+P-verdien på `r pverdi` er under 0.05, noe som indikerer statistisk signifikans. Dette betyr at sannsynligheten for å observere en forskjell like ekstrem som eller mer ekstrem enn den vi fant, gitt at nullhypotesen (ingen forskjell mellom ett og tre sett) er sann, er mindre enn 5%.
+
+T-statistikken (t(`r df`) = `r tverdi`) representerer forholdet mellom den observerte forskjellen og dens standardfeil. Frihetsgraden `r df` er basert på antall par i studien (34) minus 1.
 
 # Resultat
 
-## høyere volum øker hypotrofi
+Analysen av dataene fra @hammarstrom avdekket flere interessante funn angående effekten av treningsvolum på muskelhypertrofi og styrke i underekstremitetene.
 
-## styrke
+Endringer i mager kroppsmasse En paret t-test ble utført for å sammenligne endringene i mager kroppsmasse mellom ett sett og tre sett treningsvolum. Resultatene viste en statistisk signifikant forskjell (r lean.mass.resultater). Dette indikerer at tre sett i gjennomsnitt ga r estimat gram større økning i mager kroppsmasse sammenlignet med ett sett i underekstremitetene over en 12-ukers treningsperiode.
 
-# Statistisk programvare:
+@fig-lineplot illustrerer de individuelle endringene i mager kroppsmasse for hver deltaker. Plottet avslører betydelig variasjon i individuell respons på treningsvolumet. Mens de fleste deltakere viste større økning ved tre sett, var det noen som hadde liten forskjell eller til og med større økning ved ett sett.
 
-```         
-Nevn at du har brukt R og relevante pakker (tidyverse, exscidata, lme4) for databehandling og analyse.
-```
+@fig-scatterplot viser forholdet mellom pre- og post-intervensjonsverdier for mager masse. De fleste punktene ligger over den stiplede linjen, noe som indikerer en generell økning i mager masse for begge treningsvolum. Regresjonslinjen for tre sett ligger generelt høyere enn for ett sett, hvilket støtter funnet om større økning i mager masse ved høyere treningsvolum. @fig-boxplot presenterer fordelingen av endringer i mager kroppsmasse etter treningsvolum og kjønn. Det er en tydelig tendens til større økning i mager masse ved tre sett sammenlignet med ett sett, særlig hos menn. Betydelig individuell variasjon observeres hos begge kjønn, men den generelle trenden viser større økning i mager masse ved tre sett for både kvinner og menn.
+
+## Kjønnsforskjeller
+
+Selv om studien ikke var designet for å teste kjønnsforskjeller spesifikt, viser @fig-boxplot at menn generelt hadde en større absolutt økning i mager kroppsmasse sammenlignet med kvinner, uavhengig av treningsvolum. Dette er ikke et ukjent fenomen og skyldes nok fysiologiske forskjeller mellom kjønnene. Resultatene viser imidlertid at både menn og kvinner har en tendens til å øke muskelmasse ved 3 sett kontra 1 sett. Men det burde understrekes at dette ikke nødvendigvis er sant for alle individer uavhengig av kjønn.
+
+# Diskusjon
+
+Denne studien undersøkte effekten av treningsvolum på muskelhypertrofi i underekstremitetene hos moderat trente individer over en 12-ukers treningsperiode. Resultatene viser en statistisk signifikant forskjell i økning av mager kroppsmasse mellom ett og tre sett, med en gjennomsnittlig større økning på 122,7 gram for tre sett sammenlignet med ett sett.
+
+## Hovedfunn
+
+Det primære funnet i denne studien er at høyere treningsvolum (tre sett) resulterte i større hypertrofi sammenlignet med lavere volum (ett sett). Dette støtter det grunnleggende prinsippet om overbelastning i styrketrening, som tilsier at økt treningsvolum kan føre til større muskulære tilpasninger [@wackerhage]. Resultatene er i tråd med tidligere forskning som har vist at økt treningsvolum kan føre til større muskelvekst [@raastad]. Imidlertid er det viktig å merke seg den betydelige individuelle variasjonen i respons, som illustrert i @fig-lineplot. Denne variasjonen understreker kompleksiteten i muskulære tilpasninger og støtter @wackerhage sin påstand om at det ikke finnes et universelt optimalt motstandstreningsprogram.
+
+## Kjønnsforskjeller
+
+Selv om studien ikke primært var designet for å undersøke kjønnsforskjeller, viser @fig-boxplot at menn generelt hadde en større absolutt økning i mager kroppsmasse sammenlignet med kvinner, uavhengig av treningsvolum. Dette kan skyldes fysiologiske forskjeller mellom kjønnene, som hormonelle profiler og utgangspunkt for muskelmasse. Det er imidlertid viktig å merke seg at både menn og kvinner viste en tendens til større økning i muskelmasse ved tre sett sammenlignet med ett sett.
+
+## praktiske implikasjoner
+
+Funnene fra denne studien har flere praktiske implikasjoner for treningsprogrammering og peker også på viktige områder for fremtidig forskning. For individer som søker maksimal muskelvekst, kan det være fordelaktig å inkludere høyere treningsvolum, for eksempel tre sett per øvelse. Den observerte individuelle variasjonen understreker imidlertid behovet for personlig tilpasning av treningsprogrammer. Både menn og kvinner kan forvente fordeler av økt treningsvolum, selv om de absolutte endringene kan variere
+
+## fremtidig forskning
+
+For å bygge videre på disse funnene, hadde jeg likt å se studier undersøke interaksjonen mellom treningsvolum og andre variabler som  intensitet. Jeg skulle likt å sett for eksempel hva forskjellen mellom ett sett med høyere vekt eller repetisjoner er fra tre sett med lavere vekt eller repitisjoner.
+
+Et annet viktig forskningsområde er å undersøke mekanismene bak individuelle forskjeller i respons på treningsvolum, noe som kan bidra til mer presise og personaliserte treningsanbefalinger. Hvorfor responderer noen dårligere og noen motsatt av trenden? Vi kan gi en generell anbefaling, men det ser ut som det er noen som vil få dårligere respons av å gjøre det som de vil fungere for majoriteten.
+
+Til slutt vil jeg nevne at fremtidige studier kan med fordel fokusere på spesifikke kjønnsforskjeller i respons på ulike treningsvolum. Selv om det ser ut som at i dette tilfellet er en lik trend for begge kjønn selv med en høyere forskjell hos menn, ser vi at det er forskjeller i responsen.
+
+# Konklusjon
+
+Denne studien gir evidens for at høyere treningsvolum (tre sett) fører til større økning i mager kroppsmasse sammenlignet med lavere volum (ett sett) over en 12-ukers periode hos moderat trente individer. Resultatene støtter bruken av høyere treningsvolum for å maksimere muskelhypertrofi, men understreker også viktigheten av individuell tilpasning i treningsprogrammer. Funnene bidrar til å fylle kunnskapshullet rundt optimal treningsprogrammering for muskelvekst og styrker vår forståelse av dose-respons-forholdet i styrketrening.
+
+# Statistisk programvare
+
+All databehandling, statistisk analyse og visualisering ble utført i Rstudio (2024.09.1+394 "Cranberry Hibiscus"). Jeg brukte flere R-pakker. Tidyverse ble benyttet for datamanipulering og visualisering, spesielt pakkene dplyr for databehandling og ggplot2 for å lage figurene. GT-pakken ble brukt for å lage den formaterte tabeller. Exscidata-pakken ble brukt for å få tilgang til datasettene fra @hammarstrom. Alle analyser og figurer ble integrert i en reproduserbar rapport ved hjelp av Quarto.
 
 # Etiske hensyn:
 
-```         
-Nevn kort at studien fulgte etiske retningslinjer (hvis denne informasjonen er tilgjengelig).
-```
-
-# Diskusjon
+Studien fulgte etiske retningslinjer og var forhåndsregistrert (ClinicalTrials.gov Identifier: NCT02179307). Den ble godkjent av den lokale etiske komiteen ved Høgskolen i Lillehammer, Avdeling for idrettsvitenskap (nr. 2013-11-22:2). Alle prosedyrer ble utført i samsvar med Helsinkideklarasjonen. Deltakerne ble informert om potensielle risikoer og ubehag forbundet med studien og ga sitt informerte samtykke før de ble inkludert [@hammarstrom].
